@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NyayaNet - View Issues</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+main { max-width:900px; margin:2rem auto; }
+.issue-card { margin-bottom:1rem; }
+</style>
+</head>
+<body>
+<header>
+<h1>NyayaNet</h1>
+<nav>
+<a href="index.html">Home</a>
+<a href="view.html" class="active">View Issues</a>
+<a href="map.html">Map</a>
+<a href="resources.html">Resources</a>
+</nav>
+</header>
+
+<main>
+<h2>All Submitted Issues</h2>
+<div id="issuesContainer"></div>
+</main>
+
+<script>
+const issues = JSON.parse(localStorage.getItem("issues")) || [];
+const container = document.getElementById("issuesContainer");
+
+if(issues.length === 0){
+    container.innerHTML = "<p style='text-align:center;'>No issues submitted yet.</p>";
+}else{
+    issues.forEach((issue,index)=>{
+        const div = document.createElement("div");
+        div.className = "issue-card form-card";
+        div.innerHTML = `
+            <p><strong>#${index+1}</strong></p>
+            <p><strong>Name:</strong> ${issue.name}</p>
+            <p><strong>Email:</strong> ${issue.email}</p>
+            <p><strong>Issue:</strong> ${issue.issue}</p>
+            <p><strong>Location/Area:</strong> ${issue.location}</p>
+            <p><strong>Time:</strong> ${issue.time}</p>
+        `;
+        container.appendChild(div);
+    });
+}
+</script>
+</body>
+</html>

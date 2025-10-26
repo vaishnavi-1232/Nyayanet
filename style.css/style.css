@@ -1,0 +1,18 @@
+/* Reset & fonts */
+body { font-family: 'Roboto', sans-serif; margin:0; padding:0; background:#f5f5f5; color:#333; }
+header { background:#2e7d32; color:white; padding:1rem; text-align:center; }
+header nav { display:flex; justify-content:center; gap:1rem; margin-top:0.5rem; }
+header nav a { color:white; text-decoration:none; font-weight:bold; }
+header nav a.active { text-decoration:underline; }
+main { max-width:900px; margin:2rem auto; }
+h1,h2,h3 { margin:0.5rem 0; }
+button { cursor:pointer; transition:0.3s; border:none; border-radius:5px; padding:0.7rem 1.2rem; background:#2e7d32; color:white; font-weight:bold; }
+button:hover { background:#1b5e20; }
+.form-card, .issue-card, #details { background:white; padding:1.5rem; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); margin-bottom:1.5rem; }
+#map { height:400px; width:100%; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); margin-top:1rem; }
+.success { color:#2e7d32; font-weight:bold; text-align:center; margin-top:1rem; }
+ul { list-style:disc; margin-left:2rem; }
+li { margin-bottom:0.8rem; }
+a { color:#2e7d32; text-decoration:none; }
+a:hover { text-decoration:underline; }
+.banner { background: linear-gradient(to right, #2e7d32, #66bb6a); color:white; padding:2rem; text-align:center; border-radius:10px; margin-bottom:2rem; box-shadow:0 4px 10px rgba(0,0,0,0.2);}

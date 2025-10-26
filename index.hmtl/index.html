@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NyayaNet - Submit Issue</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<style>
+#map { height:400px; width:100%; margin-top:1rem; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+.success { color:#2e7d32; font-weight:bold; text-align:center; margin-top:1rem; }
+</style>
+</head>
+<body>
+<header>
+<h1>NyayaNet</h1>
+<nav>
+<a href="index.html" class="active">Home</a>
+<a href="view.html">View Issues</a>
+<a href="map.html">Map</a>
+<a href="resources.html">Resources</a>
+</nav>
+</header>
+
+<main>
+<div class="form-card">
+<h3>Submit an Issue</h3>
+<form id="issueForm">
+<label>Name:</label>
+<input type="text" id="name" placeholder="Your Name" required>
+<label>Email:</label>
+<input type="email" id="email" placeholder="Your Email" required>
+<label>Issue:</label>
+<textarea id="issue" rows="4" placeholder="Describe the issue..." required></textarea>
+<label>Location / Area:</label>
+<input type="text" id="location" placeholder="Enter your area or city" required>
+<button type="submit">Submit Issue</button>
+</form>
+<p id="message" class="success"></p>
+<div id="map"></div>
+</div>
+</main>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+// Initialize Leaflet map
+const map = L.map('map').setView([20.5937, 78.9629], 5); // India default
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+let marker = null;
+
+// Submit form
+const issues = JSON.parse(localStorage.getItem("issues")) || [];
+
+document.getElementById("issueForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const issueText = document.getElementById("issue").value.trim();
+    const locationText = document.getElementById("location").value.trim();
+    if(!name || !email || !issueText || !locationText){
+        alert("Please fill all fields");
+        return;
+    }
+
+    // For simplicity, assign a **random nearby coordinate** based on India map
+    const lat = 20 + Math.random() * 10;
+    const lon = 78 + Math.random() * 10;
+
+    const newIssue = {
+        name, email, issue: issueText, location: locationText,
+        lat, lon, time: new Date().toLocaleString()
+    };
+
+    issues.push(newIssue);
+    localStorage.setItem("issues", JSON.stringify(issues));
+    localStorage.setItem("lastSubmission", JSON.stringify(newIssue));
+
+    document.getElementById("message").innerText = "Issue submitted successfully! ✅";
+    document.getElementById("issueForm").reset();
+
+    // Add marker on map
+    if(marker) map.removeLayer(marker);
+    marker = L.marker([lat, lon]).addTo(map).bindPopup(`${issueText}<br>${locationText}`).openPopup();
+    map.setView([lat, lon], 12);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NyayaNet - Submission</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<h1>NyayaNet</h1>
+<nav>
+<a href="index.html">Home</a>
+<a href="view.html">View Issues</a>
+<a href="map.html">Map</a>
+<a href="resources.html">Resources</a>
+</nav>
+</header>
+
+<main>
+<h2>Last Submitted Issue ✅</h2>
+<div id="details"></div>
+<div id="map"></div>
+<button onclick="window.location.href='index.html'">Submit Another Issue</button>
+</main>
+
+<script>
+const issues = JSON.parse(localStorage.getItem("issues")) || [];
+const detailsDiv = document.getElementById("details");
+let lastSubmission = issues.length>0 ? issues[issues.length-1] : null;
+
+if(lastSubmission){
+    detailsDiv.innerHTML=`
+        <p><strong>Name:</strong> ${lastSubmission.name}</p>
+        <p><strong>Email:</strong> ${lastSubmission.email}</p>
+        <p><strong>Issue:</strong> ${lastSubmission.issue}</p>
+        <p><strong>Location/Area:</strong> ${lastSubmission.area}</p>
+        <p><strong>Time:</strong> ${lastSubmission.time}</p>
+    `;
+}else{
+    detailsDiv.innerHTML="<p>No submission found.</p>";
+}
+
+function initMap(){
+    if(!lastSubmission) return;
+    const map = new google.maps.Map(document.getElementById("map"), {
+        zoom:14,
+        center:{lat:parseFloat(lastSubmission.lat), lng:parseFloat(lastSubmission.lon)}
+    });
+    new google.maps.Marker({
+        position:{lat:parseFloat(lastSubmission.lat), lng:parseFloat(lastSubmission.lon)},
+        map: map,
+        title:lastSubmission.issue,
+        icon:"http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+    });
+}
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBe09MpSM_BlXf1q32M7xB06OvHKHiKuxoS"></script>
+</body>
+</html>
