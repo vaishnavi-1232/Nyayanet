@@ -4,56 +4,106 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NyayaNet - Map</title>
+
+<!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Style -->
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
 <style>
-main { max-width:900px; margin:2rem auto; text-align:center; }
-#map { height:500px; width:100%; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.1); }
-h2 { margin-bottom:1rem; }
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  background: #f8f9fa;
+}
+header {
+  background: #0056b3;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 1rem;
+}
+nav a.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+main {
+  max-width: 900px;
+  margin: 2rem auto;
+  text-align: center;
+}
+#map {
+  height: 500px;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+h2 { margin-bottom: 1rem; }
 </style>
 </head>
+
 <body>
 <header>
-<h1>NyayaNet</h1>
-<nav>
-<a href="index.html">Home</a>
-<a href="view.html">View Issues</a>
-<a href="map.html" class="active">Map</a>
-<a href="resources.html">Resources</a>
-</nav>
+  <h1>NyayaNet</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="view.html">View Issues</a>
+    <a href="map.html" class="active">Map</a>
+    <a href="resources.html">Resources</a>
+  </nav>
 </header>
 
 <main>
-<h2>Map of Submitted Issues</h2>
-<div id="map"></div>
+  <h2>Map of Submitted Issues</h2>
+  <div id="map"></div>
 </main>
 
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-const issues = JSON.parse(localStorage.getItem("issues")) || [];
+document.addEventListener("DOMContentLoaded", () => {
+  const mapContainer = document.getElementById("map");
+  const issues = JSON.parse(localStorage.getItem("issues")) || [];
 
-function initMap(){
-    if(issues.length === 0){
-        document.getElementById("map").innerHTML = "<p>No issues submitted yet.</p>";
-        return;
+  if (issues.length === 0) {
+    mapContainer.innerHTML = "<p>No issues submitted yet.</p>";
+    return;
+  }
+
+  // Center map on India initially
+  const map = L.map('map').setView([20.5937, 78.9629], 5);
+
+  // Add tile layer
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Add markers for all submitted issues
+  issues.forEach((issue, index) => {
+    const lat = parseFloat(issue.lat);
+    const lon = parseFloat(issue.lon);
+    if (!isNaN(lat) && !isNaN(lon)) {
+      const marker = L.marker([lat, lon]).addTo(map);
+      marker.bindPopup(
+        `<b>${issue.issue}</b><br>
+         <i>${issue.location}</i><br>
+         Submitted by: ${issue.name}<br>
+         <small>${issue.time}</small>`
+      );
+      // Open popup for the most recent issue
+      if (index === issues.length - 1) {
+        marker.openPopup();
+        map.setView([lat, lon], 7);
+      }
     }
-
-    // Center map on last submission
-    const last = issues[issues.length-1];
-    const map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 5,
-        center: { lat: parseFloat(last.lat), lng: parseFloat(last.lon) }
-    });
-
-    issues.forEach((issue,index)=>{
-        new google.maps.Marker({
-            position: { lat: parseFloat(issue.lat), lng: parseFloat(issue.lon) },
-            map: map,
-            title: `${issue.issue} (${issue.name})`,
-            icon: index===issues.length-1 ? "http://maps.google.com/mapfiles/ms/icons/red-dot.png" : "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
-        });
-    });
-}
+  });
+});
 </script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBe09MpSM_BlXf1q32M7xB06OvHKHiKuxo"></script>
 </body>
 </html>
